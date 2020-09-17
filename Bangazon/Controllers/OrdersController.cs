@@ -33,7 +33,11 @@ namespace Bangazon.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Order.Include(o => o.PaymentType).Include(o => o.User);
+            var applicationDbContext = _context.Order
+                .Include(o => o.PaymentType)
+                .Include(o => o.User)
+                .ThenInclude(o => o.Orders)
+                .ThenInclude(o => o.OrderProducts);
             return View(await applicationDbContext.ToListAsync());
         }
 
