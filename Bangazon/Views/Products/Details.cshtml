@@ -1,0 +1,36 @@
+﻿@model Bangazon.Models.Product
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>@Html.DisplayFor(model => model.Title)</h2>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-10">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-10">
+             Quantity Available
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+        <dt class="col-sm-10">
+            Price Per Unit
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+
+    </dl>
+</div>
+<div>
+    <a href="/OrderProduct/Create" class="btn btn-primary btn-sm">Add To Order</a> |
+    <a asp-action="/ProductTypes/Types">Back</a>
+</div>
