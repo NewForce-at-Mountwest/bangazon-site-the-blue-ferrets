@@ -25,10 +25,6 @@
                 Payment Type
             </th>
             <th></th>
-            <th>
-                Products
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -46,11 +42,6 @@
             <td>
                 @Html.DisplayFor(modelItem => item.PaymentType.Description)
             </td>
-            @foreach (var product in Model) {
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderProducts)
-            </td>
-            }
             <td></td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.OrderId">Edit</a> |

@@ -35,9 +35,7 @@ namespace Bangazon.Controllers
         {
             var applicationDbContext = _context.Order
                 .Include(o => o.PaymentType)
-                .Include(o => o.User)
-                .ThenInclude(o => o.Orders)
-                .ThenInclude(o => o.OrderProducts);
+                .Include(o => o.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -52,7 +50,6 @@ namespace Bangazon.Controllers
             var order = await _context.Order
                 .Include(o => o.PaymentType)
                 .Include(o => o.User)
-                .Include(o => o.OrderProducts)
                 .FirstOrDefaultAsync(m => m.OrderId == id);
             if (order == null)
             {
