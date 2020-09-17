@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Bangazon.Models.ProductType>
+
+@{
+    ViewData["Title"] = "Types";
+}
+
+<h1>Types</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Label)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Label) (@item.Products.Count)
+                </td>
+            </tr>
+            @foreach (Product product in item.Products.Take(3))
+            {
+            <tr>
+            <td>
+                <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductId">
+                    @product.Title
+                </a>
+            </td>
+            </tr>
+            }}
+
+</tbody>
+    </table>
