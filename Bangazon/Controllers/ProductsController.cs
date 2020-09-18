@@ -1,5 +1,6 @@
 ﻿using Bangazon.Data;
 using Bangazon.Models;
+using Bangazon.Models.ProductViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -51,9 +52,22 @@ namespace Bangazon.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
-            return View();
+
+
+            ProductCreateViewModel taco = new ProductCreateViewModel();
+
+            taco.productTypes = _context.ProductType.Select(c => new SelectListItem
+            {
+                Text = c.Label,
+                Value = c.ProductTypeId.ToString()
+            }
+          ).ToList();
+
+            taco.productTypes.Insert(0, new SelectListItem() { Value = "0", Text = "--Select Product Category--" });
+
+            //ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
+            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
+            return View(taco);
         }
 
         // POST: Products/Create
