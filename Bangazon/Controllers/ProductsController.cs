@@ -170,12 +170,12 @@ namespace Bangazon.Controllers
 
         public async void AddToCart(int id)
         {
+            // Get the current user
+            ApplicationUser user = await GetCurrentUserAsync();
+
             // Find the product requested
             Product productToAdd = await _context.Product.SingleOrDefaultAsync(p => p.ProductId == id);
-
-            // Get the current user
-            var user = await GetCurrentUserAsync();
-
+            
             // See if the user has an open order
             var openOrder = await _context.Order.SingleOrDefaultAsync(o => o.User == user && o.PaymentTypeId == null);
 
