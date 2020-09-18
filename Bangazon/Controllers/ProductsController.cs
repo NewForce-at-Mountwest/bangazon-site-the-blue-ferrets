@@ -79,21 +79,37 @@ namespace Bangazon.Controllers
         {
             //should I be getting the true user id, because that's what i am getting??  
             ModelState.Remove("User");
+            ModelState.Remove("product.UserId");
 
+            ProductCreateViewModel ViewModel = new ProductCreateViewModel();
             if (ModelState.IsValid)
             {
-                //We added the next two lines to get the user to check the ID.
+                //User checks id
                 var user = await GetCurrentUserAsync();
                 product.UserId = user.Id;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details", new { id = product.ProductId });
             }
-            ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
 
-            return View(product);
+            ViewModel.productTypes = _context.ProductType.Select(c => new SelectListItem
+            {
+                Text = c.Label,
+                Value = c.ProductTypeId.ToString()
+            }).ToList();
+
+
+
+            //ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
+            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
+            return View(ViewModel);
         }
+
+        //ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
+        //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
+
+        //    return View(product);
+
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
