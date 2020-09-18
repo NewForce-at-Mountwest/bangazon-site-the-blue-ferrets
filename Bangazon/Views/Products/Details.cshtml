@@ -31,6 +31,6 @@
     </dl>
 </div>
 <div>
-    <a href="/OrderProduct/Create" class="btn btn-primary btn-sm">Add To Order</a> |
+    <a asp-controller="Products" asp-action="AddToCart" asp-route-id="@Model.ProductId" class="btn btn-primary btn-sm">Add To Order</a> |
     <a asp-action="/ProductTypes/Types">Back</a>
 </div>
