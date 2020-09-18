@@ -54,20 +54,20 @@ namespace Bangazon.Controllers
         {
 
 
-            ProductCreateViewModel taco = new ProductCreateViewModel();
+            ProductCreateViewModel ViewModel = new ProductCreateViewModel();
 
-            taco.productTypes = _context.ProductType.Select(c => new SelectListItem
+            ViewModel.productTypes = _context.ProductType.Select(c => new SelectListItem
             {
                 Text = c.Label,
                 Value = c.ProductTypeId.ToString()
             }
           ).ToList();
 
-            taco.productTypes.Insert(0, new SelectListItem() { Value = "0", Text = "--Select Product Category--" });
+            ViewModel.productTypes.Insert(0, new SelectListItem() { Value = "0", Text = "--Select Product Category--" });
 
             //ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
             //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
-            return View(taco);
+            return View(ViewModel);
         }
 
         // POST: Products/Create
@@ -78,7 +78,7 @@ namespace Bangazon.Controllers
         public async Task<IActionResult> Create([Bind("ProductId,DateCreated,Description,Title,Price,Quantity,UserId,City,ImagePath,Active,ProductTypeId")] Product product)
         {
             //should I be getting the true user id, because that's what i am getting??  
-            ModelState.Remove("User");
+            ModelState.Remove("product.User");
             ModelState.Remove("product.UserId");
 
             ProductCreateViewModel ViewModel = new ProductCreateViewModel();
