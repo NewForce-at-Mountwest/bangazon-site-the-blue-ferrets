@@ -16,18 +16,17 @@ namespace Bangazon.Controllers
         private readonly ApplicationDbContext _context;
 
         private readonly UserManager<ApplicationUser> _userManager;
-     
-        public OrdersController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        //public ProductsController(ApplicationDbContext ctx,
-        //            UserManager<ApplicationUser> userManager)
+        //public OrdersController(ApplicationDbContext context)
         //{
-        //    _userManager = userManager;
-        //    _context = ctx;
+        //    _context = context;
         //}
+
+        public OrdersController(ApplicationDbContext ctx,
+                    UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+            _context = ctx;
+        }
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         // GET: Orders
@@ -47,12 +46,14 @@ namespace Bangazon.Controllers
                 return NotFound();
             }
 
+            var user = await GetCurrentUserAsync();
+
             var order = await _context.Order
                 .Include(o => o.PaymentType)
                 .Include(o => o.User)
                 .Include(o => o.OrderProducts)
                 .ThenInclude(op => op.Product)
-                //.where userId is logged in user and payment type is null
+                .Where(o => o.User == user && o.PaymentTypeId == null)
                 .FirstOrDefaultAsync(m => m.OrderId == id);
             if (order == null)
             {
