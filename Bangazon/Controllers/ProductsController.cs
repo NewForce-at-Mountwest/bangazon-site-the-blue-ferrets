@@ -174,7 +174,7 @@ namespace Bangazon.Controllers
             // Get the current user
             var user = await GetCurrentUserAsync();
 
-            // Find the product requested
+            // Find the product requested and subtract 1 from the quantity available
             Product productToAdd = await _context.Product.SingleOrDefaultAsync(p => p.ProductId == id);
 
             // See if the user has an open order
@@ -218,7 +218,8 @@ namespace Bangazon.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            return RedirectToAction("Details", "Products", new { id = id });
+            productToAdd.Quantity = productToAdd.Quantity - 1;
+            return RedirectToAction("Types", "ProductTypes", new { id = id });
         }
     }
 }
