@@ -197,6 +197,7 @@ namespace Bangazon.Controllers
                 if (ModelState.IsValid)
                 {
                     _context.Add(orderProduct);
+                    productToAdd.Quantity = productToAdd.Quantity - 1;
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
@@ -220,11 +221,12 @@ namespace Bangazon.Controllers
                         ProductId = id
                     };
                     _context.Add(orderProduct);
+                    productToAdd.Quantity = productToAdd.Quantity - 1;
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
             }
-            productToAdd.Quantity = productToAdd.Quantity - 1;
+            
             return RedirectToAction("Types", "ProductTypes", new { id = id });
         }
     }
