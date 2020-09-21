@@ -25,19 +25,7 @@ namespace Bangazon.Controllers
 
         public async Task<IActionResult> Types()
         {
-            //var model = new ProductTypesViewModel();
-
-            //.ProductType = await _context
-            //    .ProductType
-            // .Select(pt => new ProductTypes()
-            //{
-            // TypeId = pt.ProductTypeId,
-            // TypeName = pt.Label,
-            // ProductCount = pt.Products.Count(),
-            // Products = pt.Products.OrderByDescending(p => p.DateCreated).Take(3)
-            // }).ToListAsync();
-
-            List<ProductType> productTypes = new List<ProductType>();
+          List<ProductType> productTypes = new List<ProductType>();
             productTypes = await _context.ProductType
                 .Include(p => p.Products)
                 .ToListAsync();

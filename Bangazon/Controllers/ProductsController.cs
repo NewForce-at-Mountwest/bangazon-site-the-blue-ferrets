@@ -1,4 +1,4 @@
-﻿using Bangazon.Data;
+﻿﻿using Bangazon.Data;
 using Bangazon.Models;
 using Bangazon.Models.ProductViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -204,5 +204,61 @@ namespace Bangazon.Controllers
         {
             return _context.Product.Any(e => e.ProductId == id);
         }
+
+        public async Task<IActionResult> AddToCart(int id)
+        {
+            // Get the current user
+            var user = await GetCurrentUserAsync();
+
+            // Find the product requested and subtract 1 from the quantity available
+            Product productToAdd = await _context.Product.SingleOrDefaultAsync(p => p.ProductId == id);
+
+            // See if the user has an open order
+            var openOrder = await _context.Order.SingleOrDefaultAsync(o => o.User == user && o.PaymentTypeId == null);
+
+            // If no order, create one, else add to existing order
+            if (openOrder != null)
+            {
+                OrderProduct orderProduct = new OrderProduct()
+                {
+                    OrderId = openOrder.OrderId,
+                    ProductId = id
+                };
+                if (ModelState.IsValid)
+                {
+                    _context.Add(orderProduct);
+                    productToAdd.Quantity = productToAdd.Quantity - 1;
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                Order neworder = new Order()
+                {
+                    UserId = user.Id,
+                    User = user
+                };
+                if (ModelState.IsValid)
+                {
+                    _context.Add(neworder);
+                    await _context.SaveChangesAsync();
+                    openOrder = await _context.Order.SingleOrDefaultAsync(o => o.User == user && o.PaymentTypeId == null);
+
+                    OrderProduct orderProduct = new OrderProduct()
+                    {
+                        OrderId = openOrder.OrderId,
+                        ProductId = id
+                    };
+                    _context.Add(orderProduct);
+                    productToAdd.Quantity = productToAdd.Quantity - 1;
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            
+            return RedirectToAction("Types", "ProductTypes", new { id = id });
+        }
     }
 }
+
