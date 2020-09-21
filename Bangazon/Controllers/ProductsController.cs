@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿﻿using Bangazon.Data;
+using Bangazon.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Bangazon.Data;
-using Bangazon.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SignalR;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Bangazon.Controllers
 {
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
 
+        private readonly UserManager<ApplicationUser> _userManager;
         public ProductsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            _userManager = userManager;
             _context = context;
+            _userManager = userManager;
         }
-
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         // GET: Products
@@ -67,17 +63,23 @@ namespace Bangazon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,DateCreated,Description,Title,Price,Quantity,UserId,City,ImagePath,Active,ProductTypeId")] Product product)
         {
+            //should I be getting the true user id, because that's what i am getting??  
+            ModelState.Remove("User");
+
             if (ModelState.IsValid)
             {
+                //We added the next two lines to get the user to check the ID.
+                var user = await GetCurrentUserAsync();
+                product.UserId = user.Id;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = product.ProductId });
             }
             ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
+
             return View(product);
         }
-
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -108,10 +110,14 @@ namespace Bangazon.Controllers
                 return NotFound();
             }
 
+            ModelState.Remove("User");
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var user = await GetCurrentUserAsync();
+                    product.UserId = user.Id;
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }

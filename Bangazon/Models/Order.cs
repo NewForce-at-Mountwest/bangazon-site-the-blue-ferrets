@@ -1,3 +1,5 @@
+using Bangazon.Data;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,20 +16,24 @@ namespace Bangazon.Models
     [Required]
     [DataType(DataType.Date)]
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-    public DateTime DateCreated {get;set;}
+    [Display(Name = "Date Created")]
+        public DateTime DateCreated {get;set;}
 
     [DataType(DataType.Date)]
-    public DateTime? DateCompleted {get;set;}
+        [Display(Name = "Date Completed")]
+        public DateTime? DateCompleted {get;set;}
 
     [Required]
-    public string UserId {get; set;}
+        [Display(Name = "User")]
+        public string UserId {get; set;}
 
     [Required]
     public ApplicationUser User { get; set; }
+        [Display(Name = "Payment Type")]
+        public int? PaymentTypeId {get;set;}
+        [Display(Name = "Payment Type")]
+        public PaymentType PaymentType {get;set;}    
 
-    public int? PaymentTypeId {get;set;}
-    public PaymentType PaymentType {get;set;}
-
-    public virtual ICollection<OrderProduct> OrderProducts { get; set; }
+        public virtual ICollection<OrderProduct> OrderProducts { get; set; }
   }
 }
