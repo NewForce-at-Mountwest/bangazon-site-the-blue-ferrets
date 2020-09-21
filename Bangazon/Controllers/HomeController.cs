@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Bangazon.Models;
 using Microsoft.AspNetCore.Mvc;
-using Bangazon.Models;
+using System.Diagnostics;
 
 namespace Bangazon.Controllers
 {
