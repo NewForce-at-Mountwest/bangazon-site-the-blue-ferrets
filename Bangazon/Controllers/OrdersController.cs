@@ -36,8 +36,7 @@ namespace Bangazon.Controllers
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
+           
                 var user = await GetCurrentUserAsync();
 
                 var openOrder = await _context.Order
@@ -46,20 +45,11 @@ namespace Bangazon.Controllers
                     .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.Product)
                     .FirstOrDefaultAsync(o => o.User == user && o.PaymentTypeId == null);
-                return View(openOrder);
-            }
-                var order = await _context.Order
-                    .Include(o => o.PaymentType)
-                    .Include(o => o.User)
-                    .Include(o => o.OrderProducts)
-                    .ThenInclude(op => op.Product)
-                    .FirstOrDefaultAsync(m => m.OrderId == id);
-            if (order == null)
             {
-                return NotFound();
+                return View("Empty");
             }
 
-            return View(order);
+            return View(openOrder);
         }
 
         // GET: Orders/Create
@@ -95,9 +85,14 @@ namespace Bangazon.Controllers
             {
                 return NotFound();
             }
+            var user = await GetCurrentUserAsync();
 
             var order = await _context.Order
-                .FindAsync(id);
+                .Include(o => o.PaymentType)
+                .Include(o => o.User)
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .FirstOrDefaultAsync(m => m.OrderId == id);
 
             if (order == null)
             {
@@ -119,9 +114,12 @@ namespace Bangazon.Controllers
             {
                 return NotFound();
             }
-
+            ModelState.Remove("User");
+            ModelState.Remove("UserId");
             if (ModelState.IsValid)
             {
+                var user = await GetCurrentUserAsync();
+                order.UserId = user.Id;
                 try
                 {
                     _context.Update(order);
