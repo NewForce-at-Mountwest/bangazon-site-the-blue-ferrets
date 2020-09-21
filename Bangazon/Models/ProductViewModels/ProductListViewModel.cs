@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-using Bangazon.Models;
-using Bangazon.Data;
+﻿using System.Collections.Generic;
 
 namespace Bangazon.Models.ProductViewModels
 {
-  public class ProductListViewModel
-  {
-    public IEnumerable<Product> Products { get; set; }
-  }
+    public class ProductListViewModel
+    {
+        public IEnumerable<Product> Products { get; set; }
+    }
 }

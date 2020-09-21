@@ -1,8 +1,6 @@
 ﻿@model Bangazon.Models.Order
 
-@{
-    ViewData["Title"] = "Details";
-}
+@{ ViewData["Title"] = "Details"; }
 
 <h1>Details</h1>
 
@@ -26,15 +24,15 @@
                 <tbody>
                     @foreach (var product in Model.OrderProducts)
                     {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => product.Product.Title)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => product.Product.Price)
-                            </td>
-                        </tr>
-                    }
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => product.Product.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => product.Product.Price)
+            </td>
+        </tr>
+}
                 </tbody>
             </table>
             <td>
