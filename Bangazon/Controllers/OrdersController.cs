@@ -45,6 +45,8 @@ namespace Bangazon.Controllers
                     .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.Product)
                     .FirstOrDefaultAsync(o => o.User == user && o.PaymentTypeId == null);
+
+            if (openOrder == null)
             {
                 return View("Empty");
             }
