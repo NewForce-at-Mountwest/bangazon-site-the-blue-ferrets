@@ -1,13 +1,10 @@
-﻿using System;
+﻿using Bangazon.Data;
+using Bangazon.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Bangazon.Data;
-using Bangazon.Models;
-using Bangazon.Models.ProductTypeViewModels;
 
 namespace Bangazon.Controllers
 {
@@ -42,14 +39,14 @@ namespace Bangazon.Controllers
 
             List<ProductType> productTypes = new List<ProductType>();
             productTypes = await _context.ProductType
-                .Include (p => p.Products)
+                .Include(p => p.Products)
                 .ToListAsync();
 
-    return View(productTypes);
-    }
+            return View(productTypes);
+        }
 
-    // GET: ProductTypes/Details/5
-    public async Task<IActionResult> Details(int? id)
+        // GET: ProductTypes/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
