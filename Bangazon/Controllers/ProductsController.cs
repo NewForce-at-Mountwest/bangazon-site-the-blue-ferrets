@@ -1,5 +1,6 @@
-﻿using Bangazon.Data;
+﻿﻿using Bangazon.Data;
 using Bangazon.Models;
+using Bangazon.Models.ProductViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -64,9 +65,22 @@ namespace Bangazon.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
-            return View();
+
+
+            ProductCreateViewModel ViewModel = new ProductCreateViewModel();
+
+            ViewModel.productTypes = _context.ProductType.Select(c => new SelectListItem
+            {
+                Text = c.Label,
+                Value = c.ProductTypeId.ToString()
+            }
+          ).ToList();
+
+            ViewModel.productTypes.Insert(0, new SelectListItem() { Value = "0", Text = "--Select Product Category--" });
+
+            //ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
+            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
+            return View(ViewModel);
         }
 
         // POST: Products/Create
@@ -77,22 +91,38 @@ namespace Bangazon.Controllers
         public async Task<IActionResult> Create([Bind("ProductId,DateCreated,Description,Title,Price,Quantity,UserId,City,ImagePath,Active,ProductTypeId")] Product product)
         {
             //should I be getting the true user id, because that's what i am getting??  
-            ModelState.Remove("User");
+            ModelState.Remove("product.User");
+            ModelState.Remove("product.UserId");
 
+            ProductCreateViewModel ViewModel = new ProductCreateViewModel();
             if (ModelState.IsValid)
             {
-                //We added the next two lines to get the user to check the ID.
+                //User checks id
                 var user = await GetCurrentUserAsync();
                 product.UserId = user.Id;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details", new { id = product.ProductId });
             }
-            ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
 
-            return View(product);
+            ViewModel.productTypes = _context.ProductType.Select(c => new SelectListItem
+            {
+                Text = c.Label,
+                Value = c.ProductTypeId.ToString()
+            }).ToList();
+
+
+
+            //ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
+            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
+            return View(ViewModel);
         }
+
+        //ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
+        //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
+
+        //    return View(product);
+
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -187,5 +217,61 @@ namespace Bangazon.Controllers
         {
             return _context.Product.Any(e => e.ProductId == id);
         }
+
+        public async Task<IActionResult> AddToCart(int id)
+        {
+            // Get the current user
+            var user = await GetCurrentUserAsync();
+
+            // Find the product requested and subtract 1 from the quantity available
+            Product productToAdd = await _context.Product.SingleOrDefaultAsync(p => p.ProductId == id);
+
+            // See if the user has an open order
+            var openOrder = await _context.Order.SingleOrDefaultAsync(o => o.User == user && o.PaymentTypeId == null);
+
+            // If no order, create one, else add to existing order
+            if (openOrder != null)
+            {
+                OrderProduct orderProduct = new OrderProduct()
+                {
+                    OrderId = openOrder.OrderId,
+                    ProductId = id
+                };
+                if (ModelState.IsValid)
+                {
+                    _context.Add(orderProduct);
+                    productToAdd.Quantity = productToAdd.Quantity - 1;
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                Order neworder = new Order()
+                {
+                    UserId = user.Id,
+                    User = user
+                };
+                if (ModelState.IsValid)
+                {
+                    _context.Add(neworder);
+                    await _context.SaveChangesAsync();
+                    openOrder = await _context.Order.SingleOrDefaultAsync(o => o.User == user && o.PaymentTypeId == null);
+
+                    OrderProduct orderProduct = new OrderProduct()
+                    {
+                        OrderId = openOrder.OrderId,
+                        ProductId = id
+                    };
+                    _context.Add(orderProduct);
+                    productToAdd.Quantity = productToAdd.Quantity - 1;
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            
+            return RedirectToAction("Types", "ProductTypes", new { id = id });
+        }
     }
 }
+
