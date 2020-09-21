@@ -4,9 +4,10 @@
 
 <h1>Details</h1>
 
-<div>
+<iv>
     <h4>Order</h4>
     <hr />
+
     <dl class="row">
         <dt class="col-sm-2">
             <table class="table table-striped table-bordered">
@@ -36,11 +37,9 @@
             <td>
                 Total: @Model.OrderProducts.Sum(i => i.Product.Price)
             </td>
-
         </dt>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.OrderId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.OrderId"><button class="btn btn-primary">Checkout</button></a>
+    </div>
