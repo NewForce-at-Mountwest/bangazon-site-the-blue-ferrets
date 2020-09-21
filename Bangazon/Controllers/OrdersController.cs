@@ -16,11 +16,6 @@ namespace Bangazon.Controllers
         private readonly ApplicationDbContext _context;
 
         private readonly UserManager<ApplicationUser> _userManager;
-        //public OrdersController(ApplicationDbContext context)
-        //{
-        //    _context = context;
-        //}
-
         public OrdersController(ApplicationDbContext ctx,
                     UserManager<ApplicationUser> userManager)
         {
@@ -101,7 +96,9 @@ namespace Bangazon.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Order.FindAsync(id);
+            var order = await _context.Order
+                .FindAsync(id);
+
             if (order == null)
             {
                 return NotFound();
@@ -182,6 +179,6 @@ namespace Bangazon.Controllers
         private bool OrderExists(int id)
         {
             return _context.Order.Any(e => e.OrderId == id);
-        }
+        }            
     }
 }

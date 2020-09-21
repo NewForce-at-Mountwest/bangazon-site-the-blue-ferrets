@@ -39,11 +39,10 @@
         <td>
             Total: @Model.OrderProducts.Sum(i => i.Product.Price)
         </td>
-            <a asp-action="Create" asp-route="@Model.PaymentType.Description">Complete Order</a>
+            
         </dt>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.OrderId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.OrderId"><button class="btn btn-primary">Checkout</button></a>
 </div>
