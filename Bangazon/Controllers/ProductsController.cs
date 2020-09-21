@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,9 +23,21 @@ namespace Bangazon.Controllers
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Product.Include(p => p.ProductType).Include(p => p.User);
+            ViewData["CurrentFilter"] = searchString;
+
+            var applicationDbContext = _context.Product.Include(p => p.ProductType).Include(p => p.User).AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                applicationDbContext = applicationDbContext.Where(p => p.Title.Contains(searchString));
+            }
+            if(applicationDbContext.Count() < 1 )
+            {
+                return NotFound();
+            }
+
             return View(await applicationDbContext.ToListAsync());
         }
 
